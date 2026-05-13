@@ -1,0 +1,14 @@
+apiVersion: v1
+entries:
+  demo-crm:
+  - apiVersion: v2
+    appVersion: latest
+    created: "2026-05-13T19:06:28.61999+03:00"
+    description: Demo CRM application with MongoDB, NGINX Ingress, and TLS via cert-manager
+    digest: ec4c97f7adc64b95911d95fe88705c0908422219e9247ad914f4d099c725d09d
+    name: demo-crm
+    type: application
+    urls:
+    - https://roydann.github.io/demo-crm-chart/demo-crm-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-05-13T19:06:28.61798+03:00"
