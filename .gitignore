@@ -1,2 +1,7 @@
-demo-crm/secrets/mongodb-secret.yaml
 demo-crm/secrets/mongodb-uri-secret.yaml
+demo-crm/secrets/mongodb-secret.yaml
+
+demo-crm/charts
+
+*.tgz
+!docs/*.tgz
