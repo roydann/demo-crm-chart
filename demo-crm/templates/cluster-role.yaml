@@ -1,0 +1,62 @@
+# CLUSTER-WIDE READ — lets ops and admin view nodes, PVs, StorageClasses, namespaces
+# This is read-only at the cluster level; all write permissions stay namespace-scoped
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole # no namespace field — this exists at the cluster level, not inside any namespace
+metadata:
+  name: devops-demo-crm-cluster-reader
+  labels:
+    app.kubernetes.io/part-of: demo-crm
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+    team: devops
+rules:
+  - apiGroups: [""]
+    resources: ["nodes", "nodes/status"] # nodes are cluster-scoped — they don't belong to any namespace
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["persistentvolumes"] # PVs are cluster-scoped — PVCs are namespaced, PVs are not
+    verbs: ["get", "list", "watch"]
+  - apiGroups: ["storage.k8s.io"]
+    resources: ["storageclasses"] # defines available disk types (SSD, HDD, etc) — cluster-scoped
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["namespaces"]
+    verbs: ["get", "list", "watch"]
+  - apiGroups: [""]
+    resources: ["events"]
+    verbs: ["get", "list", "watch"]
+---
+# Bind ops-sa to cluster reader
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding # no namespace field — applies cluster-wide
+metadata:
+  name: ops-cluster-reader-binding
+  labels:
+    app.kubernetes.io/part-of: demo-crm
+    app.kubernetes.io/managed-by: kubectl
+    team: devops
+subjects:
+  - kind: ServiceAccount
+    name: ops-sa
+    namespace: devops-demo-crm-prod # even though the binding is cluster-wide, the SA still lives in a namespace
+roleRef:
+  kind: ClusterRole
+  name: devops-demo-crm-cluster-reader
+  apiGroup: rbac.authorization.k8s.io
+---
+# Bind admin-sa to cluster reader
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding # no namespace field — applies cluster-wide
+metadata:
+  name: admin-cluster-reader-binding
+  labels:
+    app.kubernetes.io/part-of: demo-crm
+    app.kubernetes.io/managed-by: kubectl
+    team: devops
+subjects:
+  - kind: ServiceAccount
+    name: admin-sa
+    namespace: devops-demo-crm-prod # even though the binding is cluster-wide, the SA still lives in a namespace
+roleRef:
+  kind: ClusterRole
+  name: devops-demo-crm-cluster-reader
+  apiGroup: rbac.authorization.k8s.io
