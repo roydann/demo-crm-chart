@@ -8,6 +8,7 @@ metadata:
     {{- include "demo-crm.labels" . | nindent 4 }}
   annotations:
     nginx.org/mergeable-ingress-type: "master"
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
@@ -27,7 +28,6 @@ metadata:
     {{- include "demo-crm.labels" . | nindent 4 }}
   annotations:
     nginx.org/mergeable-ingress-type: "minion"
-    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   rules:
