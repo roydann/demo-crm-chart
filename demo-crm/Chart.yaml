@@ -2,6 +2,6 @@ apiVersion: v2
 name: demo-crm
 description: Demo CRM application with MongoDB, NGINX Ingress, and TLS via cert-manager
 type: application
-version: 0.1.3
+version: 0.1.4
 appVersion: "latest"
 dependencies: []
