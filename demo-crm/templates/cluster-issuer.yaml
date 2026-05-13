@@ -20,4 +20,8 @@ spec:
       - http01:
           ingress:
             class: {{ .Values.ingress.className }}
+            ingressTemplate:
+              metadata:
+                annotations:
+                  nginx.org/mergeable-ingress-type: "minion"
 {{- end }}
