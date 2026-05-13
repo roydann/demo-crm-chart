@@ -1,0 +1,15 @@
+Demo CRM has been installed successfully.
+
+App URL:   https://{{ .Values.ingress.host }}
+Namespace: {{ .Values.namespace }}
+Release:   {{ .Release.Name }}
+Version:   {{ .Chart.AppVersion }}
+
+To check the status of your pods:
+  kubectl get pods -n {{ .Values.namespace }}
+
+To check the ingress:
+  kubectl get ingress -n {{ .Values.namespace }}
+
+To check the certificate:
+  kubectl get certificate -n {{ .Values.namespace }}

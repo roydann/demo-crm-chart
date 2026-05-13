@@ -1,0 +1,43 @@
+# Master — owns the host and TLS
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "demo-crm.fullname" . }}-master
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "demo-crm.labels" . | nindent 4 }}
+  annotations:
+    nginx.org/mergeable-ingress-type: "master"
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - hosts:
+        - {{ .Values.ingress.host }}
+      secretName: {{ .Values.ingress.tlsSecretName }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+---
+# Minion — owns the paths
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "demo-crm.fullname" . }}-minion
+  namespace: {{ .Values.namespace }}
+  labels:
+    {{- include "demo-crm.labels" . | nindent 4 }}
+  annotations:
+    nginx.org/mergeable-ingress-type: "minion"
+    cert-manager.io/cluster-issuer: {{ .Values.ingress.clusterIssuer }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  rules:
+    - host: {{ .Values.ingress.host }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "demo-crm.fullname" . }}
+                port:
+                  number: {{ .Values.service.port }}

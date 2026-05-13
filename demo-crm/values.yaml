@@ -1,0 +1,102 @@
+# ── General ────────────────────────────────────────────────
+namespace: devops-demo-crm-prod
+replicaCount: 2
+
+# ── Image ──────────────────────────────────────────────────
+image:
+  repository: pwstaging/demo-crm
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+# ── Strategy ───────────────────────────────────────────────
+strategy:
+  type: RollingUpdate
+  maxUnavailable: 0
+  maxSurge: 1
+
+# ── Security Context ───────────────────────────────────────
+securityContext:
+  runAsUser: 1000
+  fsGroup: 2000
+
+# ── Service ────────────────────────────────────────────────
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+# ── Resources ──────────────────────────────────────────────
+resources:
+  requests:
+    cpu: "100m"
+    memory: "128Mi"
+  limits:
+    cpu: "500m"
+    memory: "256Mi"
+
+# ── Probes ─────────────────────────────────────────────────
+probes:
+  path: /
+  readiness:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+    failureThreshold: 3
+  liveness:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    failureThreshold: 3
+  startup:
+    failureThreshold: 30
+    periodSeconds: 5
+
+# ── Graceful Shutdown ──────────────────────────────────────
+terminationGracePeriodSeconds: 30
+
+# ── Config (non-sensitive) ─────────────────────────────────
+config:
+  logLevel: "info"
+  persistence: "true"
+
+# ── Secret ─────────────────────────────────────────────────
+secret:
+  mongodb:
+    name: mongodb-secret
+  mongodbUri:
+    name: mongodb-uri-secret
+    key: MONGODB_URI
+
+# ── Service Account ────────────────────────────────────────
+serviceAccount:
+  create: true
+  ops:
+    name: ops-sa
+    description: "Service account for ops role — full deploy, no delete"
+  admin:
+    name: admin-sa
+    description: "Service account for admin role — full access including delete"
+
+# ── RBAC ───────────────────────────────────────────────────
+rbac:
+  ops:
+    roleName: ops-role
+    bindingName: ops-rolebinding
+  admin:
+    roleName: admin-role
+    bindingName: admin-rolebinding
+
+# ── Ingress ────────────────────────────────────────────────
+ingress:
+  host: roy-crm.ddns.net
+  tlsSecretName: demo-crm-tls
+  clusterIssuer: letsencrypt-prod
+  className: nginx
+
+# ── PodDisruptionBudget ────────────────────────────────────
+pdb:
+  minAvailable: 1
+
+# ── ClusterIssuer ──────────────────────────────────────────
+clusterIssuer:
+  enabled: false
+  email: "your@email.com"
+
