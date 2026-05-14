@@ -1,6 +1,6 @@
 # ── General ────────────────────────────────────────────────
 namespace: devops-demo-crm-prod
-replicaCount: 3
+replicaCount: 2
 
 # ── Image ──────────────────────────────────────────────────
 image:
